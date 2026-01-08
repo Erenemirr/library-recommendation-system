@@ -20,6 +20,24 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // Şimdilik Cognito yok, o yüzden sabit userId kullanıyoruz
 const CURRENT_USER_ID = '1';
 
+async function parseApiJson<T>(response: Response): Promise<T> {
+  const data = await response.json();
+
+  if (typeof data === 'string') {
+    return JSON.parse(data) as T;
+  }
+
+  if (data && typeof data === 'object' && 'body' in data) {
+    const body = (data as { body: unknown }).body;
+    if (typeof body === 'string') {
+      return JSON.parse(body) as T;
+    }
+    return body as T;
+  }
+
+  return data as T;
+}
+
 /**
  * BOOKS
  * ============================================================================
@@ -27,18 +45,28 @@ const CURRENT_USER_ID = '1';
 
 // Tüm kitapları getir
 export async function getBooks(): Promise<Book[]> {
-  const response = await fetch('{API_BASE_URL}/books');
+  const response = await fetch(`${API_BASE_URL}/books`);
 
   if (!response.ok) {
     throw new Error('Failed to fetch books');
   }
 
-  return response.json();
+  const data = await parseApiJson<unknown>(response);
+  if (Array.isArray(data)) {
+    return data as Book[];
+  }
+  if (data && typeof data === 'object' && 'Items' in data) {
+    return (data as { Items: Book[] }).Items;
+  }
+  if (data && typeof data === 'object' && 'books' in data) {
+    return (data as { books: Book[] }).books;
+  }
+  return [];
 }
 
 // Tek bir kitabı ID ile getir
 export async function getBook(id: string): Promise<Book | null> {
-  const response = await fetch('{API_BASE_URL}/books/${id}');
+  const response = await fetch(`${API_BASE_URL}/books/${id}`);
 
   if (response.status === 404) {
     return null;
@@ -48,7 +76,7 @@ export async function getBook(id: string): Promise<Book | null> {
     throw new Error('Failed to fetch book');
   }
 
-  return response.json();
+  return parseApiJson<Book | null>(response);
 }
 
 /**
@@ -133,13 +161,23 @@ export async function getRecommendations(): Promise<Recommendation[]> {
 
 // Kullanıcının bütün reading listelerini getir
 export async function getReadingLists(): Promise<ReadingList[]> {
-  const response = await fetch('{API_BASE_URL}/reading-lists?userId=${CURRENT_USER_ID}');
+  const response = await fetch(`${API_BASE_URL}/reading-lists?userId=${CURRENT_USER_ID}`);
 
   if (!response.ok) {
     throw new Error('Failed to fetch reading lists');
   }
 
-  return response.json();
+  const data = await parseApiJson<unknown>(response);
+  if (Array.isArray(data)) {
+    return data as ReadingList[];
+  }
+  if (data && typeof data === 'object' && 'Items' in data) {
+    return (data as { Items: ReadingList[] }).Items;
+  }
+  if (data && typeof data === 'object' && 'readingLists' in data) {
+    return (data as { readingLists: ReadingList[] }).readingLists;
+  }
+  return [];
 }
 
 // Yeni reading list oluştur
@@ -151,7 +189,7 @@ export async function createReadingList(
     userId: CURRENT_USER_ID,
   };
 
-  const response = await fetch('{API_BASE_URL}/reading-lists/${id}' {
+  const response = await fetch(`${API_BASE_URL}/reading-lists`, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(payload),
@@ -161,7 +199,7 @@ export async function createReadingList(
     throw new Error('Failed to create reading list');
   }
 
-  return response.json();
+  return parseApiJson<ReadingList>(response);
 }
 
 // Reading list güncelle
@@ -174,7 +212,7 @@ export async function updateReadingList(
     userId: CURRENT_USER_ID,
   };
 
-  const response = await fetch(${API_BASE_URL}/reading-lists/${id}, {
+  const response = await fetch(`${API_BASE_URL}/reading-lists/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -186,7 +224,7 @@ export async function updateReadingList(
     throw new Error('Failed to update reading list');
   }
 
-  return response.json();
+  return parseApiJson<ReadingList>(response);
 }
 
 // Reading list sil
@@ -195,7 +233,7 @@ export async function deleteReadingList(id: string): Promise<void> {
     userId: CURRENT_USER_ID,
   };
 
-  const response = await fetch(${API_BASE_URL}/reading-lists/${id}, {
+  const response = await fetch(`${API_BASE_URL}/reading-lists/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
