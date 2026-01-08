@@ -274,21 +274,21 @@ aws dynamodb batch-write-item --request-items file://books-data.json
    - Index name: `id-index`
    - Click "Create index"
 
-### Day 3-4: Implement Books API Lambda Functions
+### Day 3-4: Implement Books API Lambda Functions ---
 
 #### Lambda Function: get-books
 
 1. **Create Lambda function**:
    - Name: `library-get-books`
    - Runtime: Node.js 20.x
-   - Create new execution role
+   - Create new execution role 
 
 2. **Add DynamoDB permissions to role**:
    - Go to IAM > Roles
    - Find your Lambda execution role
    - Attach policy: `AmazonDynamoDBReadOnlyAccess`
 
-3. **Function code**:
+3. **Function code**: ------------
 
 ```javascript
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';

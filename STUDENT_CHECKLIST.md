@@ -67,10 +67,10 @@ Use this checklist to track your progress through the 4-week project.
 - [ ] Load books into DynamoDB using AWS CLI
 - [ ] Verify data in DynamoDB Console
 
-### Books API Lambda Functions
+### Books API Lambda Functions ------
 
 - [ ] Create Lambda: `library-get-books`
-- [ ] Add DynamoDB read permissions to Lambda role
+- [ ] Add DynamoDB read permissions to Lambda role 
 - [ ] Deploy get-books code (see IMPLEMENTATION_GUIDE.md)
 - [ ] Test Lambda in AWS Console
 - [ ] Create API Gateway resource: `/books`
@@ -89,7 +89,7 @@ Use this checklist to track your progress through the 4-week project.
 - [ ] Test: `curl https://YOUR-API-ID.execute-api.us-east-1.amazonaws.com/dev/books/1`
 - [ ] See single book details
 
-### Reading Lists API Lambda Functions
+### Reading Lists API Lambda Functions -----
 
 - [ ] Create Lambda: `library-get-reading-lists`
 - [ ] Deploy code with DynamoDB Query by userId
