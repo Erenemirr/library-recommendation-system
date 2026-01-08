@@ -15,6 +15,30 @@ This project provides a **complete frontend starter** with mock data and compreh
 
 **Current Status**: ✅ Frontend complete with mock data | ⏳ Backend to be implemented by students
 
+## Live Deployment
+
+- **Live URL**: https://d2t5ym7bh6t3iv.cloudfront.net
+- **API Base URL**: https://4b1qfbrpxj.execute-api.us-east-1.amazonaws.com/dev
+
+### API Endpoints
+
+- `GET /books`
+- `GET /books/{id}`
+- `GET /reading-lists?userId=1`
+- `POST /reading-lists`
+- `PUT /reading-lists/{id}`
+- `DELETE /reading-lists/{id}`
+- `POST /recommendations`
+
+## Team Member Contributions
+
+- Eren: Week 1-2, Report
+- Seçil: Week 3-4, Presentation, Testing
+
+## Architecture Diagram
+
+![SEBooksAI Architecture](docs/architecture.png)
+
 ## 🚀 Features
 
 - **Modern Tech Stack**: React 19, TypeScript, Vite, Tailwind CSS
