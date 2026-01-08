@@ -1,4 +1,5 @@
 import { Book, ReadingList, Review, Recommendation } from '@/types';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 /**
  * ============================================================================
@@ -36,6 +37,22 @@ async function parseApiJson<T>(response: Response): Promise<T> {
   }
 
   return data as T;
+}
+
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  try {
+    const session = await fetchAuthSession();
+    const token = session.tokens?.idToken?.toString();
+    if (!token) {
+      return { 'Content-Type': 'application/json' };
+    }
+    return {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+  } catch {
+    return { 'Content-Type': 'application/json' };
+  }
 }
 
 /**
@@ -161,7 +178,10 @@ export async function getRecommendations(): Promise<Recommendation[]> {
 
 // Kullanıcının bütün reading listelerini getir
 export async function getReadingLists(): Promise<ReadingList[]> {
-  const response = await fetch(`${API_BASE_URL}/reading-lists?userId=${CURRENT_USER_ID}`);
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_BASE_URL}/reading-lists?userId=${CURRENT_USER_ID}`, {
+    headers,
+  });
 
   if (!response.ok) {
     throw new Error('Failed to fetch reading lists');
@@ -189,9 +209,10 @@ export async function createReadingList(
     userId: CURRENT_USER_ID,
   };
 
+  const headers = await getAuthHeaders();
   const response = await fetch(`${API_BASE_URL}/reading-lists`, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -212,11 +233,10 @@ export async function updateReadingList(
     userId: CURRENT_USER_ID,
   };
 
+  const headers = await getAuthHeaders();
   const response = await fetch(`${API_BASE_URL}/reading-lists/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -233,11 +253,10 @@ export async function deleteReadingList(id: string): Promise<void> {
     userId: CURRENT_USER_ID,
   };
 
+  const headers = await getAuthHeaders();
   const response = await fetch(`${API_BASE_URL}/reading-lists/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 

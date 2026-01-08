@@ -4,7 +4,7 @@ import { Input } from '@/components/common/Input';
 import { Button } from '@/components/common/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { validateEmail, validateRequired } from '@/utils/validation';
-import { handleApiError } from '@/utils/errorHandling';
+import { handleApiError, showSuccess } from '@/utils/errorHandling';
 
 /**
  * Login page component
@@ -46,6 +46,13 @@ export function Login() {
       await login(email, password);
       navigate('/');
     } catch (error) {
+      const errorName =
+        error && typeof error === 'object' && 'name' in error ? String(error.name) : '';
+      if (errorName === 'UserNotConfirmedException') {
+        showSuccess('Please confirm your email before signing in.');
+        navigate('/confirm-signup', { state: { email } });
+        return;
+      }
       handleApiError(error);
     } finally {
       setIsLoading(false);

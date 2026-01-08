@@ -1,5 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect } from 'react';
+import {
+  signIn,
+  signUp,
+  signOut,
+  getCurrentUser,
+  fetchUserAttributes,
+} from 'aws-amplify/auth';
 import { User } from '@/types';
 
 /**
@@ -91,50 +98,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Replace with Cognito session check in Week 3, Day 3-4
-    //
-    // Implementation:
-    // const checkAuth = async () => {
-    //   try {
-    //     const user = await getCurrentUser();
-    //     setUser({
-    //       id: user.userId,
-    //       email: user.signInDetails?.loginId || '',
-    //       name: user.username,
-    //       role: 'user',
-    //       createdAt: new Date().toISOString()
-    //     });
-    //   } catch {
-    //     setUser(null);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // };
-    // checkAuth();
+    const checkAuth = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        const attributes = await fetchUserAttributes();
+        setUser({
+          id: currentUser.userId,
+          email: attributes.email || currentUser.signInDetails?.loginId || '',
+          name: attributes.name || currentUser.username,
+          role: 'user',
+          createdAt: new Date().toISOString(),
+        });
+      } catch {
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    // MOCK: Check localStorage for development
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    checkAuth();
   }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with Cognito Auth.signIn(email, password)
-      // Mock implementation for development
-      void password; // Will be used with Cognito
-      const mockUser: User = {
-        id: '1',
-        email,
-        name: 'John Doe',
+      await signIn({ username: email, password });
+      const currentUser = await getCurrentUser();
+      const attributes = await fetchUserAttributes();
+      setUser({
+        id: currentUser.userId,
+        email: attributes.email || email,
+        name: attributes.name || currentUser.username,
         role: 'user',
         createdAt: new Date().toISOString(),
-      };
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      });
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -146,9 +143,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = async () => {
     setIsLoading(true);
     try {
-      // TODO: Replace with Cognito Auth.signOut()
+      await signOut();
       setUser(null);
-      localStorage.removeItem('user');
     } catch (error) {
       console.error('Logout error:', error);
       throw error;
@@ -160,18 +156,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signup = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with Cognito Auth.signUp
-      // Mock implementation for development
-      void password; // Will be used with Cognito
-      const mockUser: User = {
-        id: '1',
-        email,
-        name,
-        role: 'user',
-        createdAt: new Date().toISOString(),
-      };
-      setUser(mockUser);
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      await signUp({
+        username: email,
+        password,
+        options: {
+          userAttributes: {
+            email,
+            name,
+          },
+        },
+      });
     } catch (error) {
       console.error('Signup error:', error);
       throw error;
