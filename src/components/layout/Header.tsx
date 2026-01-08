@@ -41,7 +41,7 @@ export function Header() {
                 </svg>
               </div>
             </div>
-            <span className="text-xl font-bold gradient-text">LibraryAI</span>
+            <span className="text-xl font-bold gradient-text">SEBooksAI</span>
           </Link>
 
           {/* Desktop Navigation */}

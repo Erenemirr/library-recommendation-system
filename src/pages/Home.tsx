@@ -75,7 +75,7 @@ export function Home() {
         <div className="container mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-5xl md:text-6xl font-extrabold mb-6">
-              <span className="gradient-text">Why Choose LibraryAI?</span>
+              <span className="gradient-text">Why Choose SEBooksAI?</span>
             </h2>
             <p className="text-slate-600 text-xl max-w-2xl mx-auto">
               Experience the future of book discovery with our intelligent recommendation system

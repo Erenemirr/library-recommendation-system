@@ -34,10 +34,10 @@ export function Footer() {
                   />
                 </svg>
               </div>
-              <span className="text-xl font-bold">LibraryAI</span>
+              <span className="text-xl font-bold">SEBooksAI</span>
             </div>
             <p className="text-sm text-slate-300">
-              © {currentYear} LibraryAI. All rights reserved.
+              © {currentYear} SEBooksAI. All rights reserved.
             </p>
           </div>
 
