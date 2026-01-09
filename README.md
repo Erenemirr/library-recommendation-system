@@ -32,8 +32,8 @@ This project provides a **complete frontend starter** with mock data and compreh
 
 ## Team Member Contributions
 
-- Eren: Week 1-2, Report
-- Seçil: Week 3-4, Presentation, Testing
+- Eren: Week 1-2
+- Seçil: Week 3-4, Presentation
 
 ## Architecture Diagram
 
